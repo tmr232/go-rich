@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	fmt.Println(rich.Stylize("[green]Hello, [#5555dd underline]World!"))
+	fmt.Println(rich.Stylize("[1]Hello, [#5555dd underline]World!"))
 }

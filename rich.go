@@ -1,7 +1,6 @@
 package rich
 
 import (
-	"github.com/frustra/bbcode"
 	"github.com/muesli/termenv"
 	"golang.org/x/image/colornames"
 	"image/color"
@@ -72,8 +71,7 @@ func colorByName(name string) color.Color {
 	return nil
 }
 
-func Stylize(s string) string {
-
+func StylizeE(s string) (string, error) {
 	styleStack := make([]StyleTag, 1)
 
 	builder := strings.Builder{}
@@ -95,19 +93,28 @@ func Stylize(s string) string {
 		styleStack = styleStack[:len(styleStack)-1]
 	}
 
-	for token := range bbcode.Lex(s) {
-		switch token.ID {
-		case bbcode.TEXT:
-			format(token.Value.(string))
-		case bbcode.OPENING_TAG:
-			tag := token.Value.(bbcode.BBOpeningTag)
-			setStyle(tag.Raw[1 : len(tag.Raw)-1])
-
-		case bbcode.CLOSING_TAG:
-			tag := token.Value.(bbcode.BBClosingTag)
-			popStyle(tag.Raw[2 : len(tag.Raw)-1])
+	parts, err := parseString(s)
+	if err != nil {
+		return "", err
+	}
+	for _, part := range parts {
+		switch part := part.(type) {
+		case Text:
+			format(string(part))
+		case OpeningTag:
+			setStyle(string(part))
+		case ClosingTag:
+			popStyle(string(part))
 		}
 	}
 
-	return builder.String()
+	return builder.String(), nil
+}
+
+func Stylize(s string) string {
+	stylized, err := StylizeE(s)
+	if err != nil {
+		panic(err)
+	}
+	return stylized
 }

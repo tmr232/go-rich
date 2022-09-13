@@ -3,7 +3,6 @@ module github.com/tmr232/go-rich
 go 1.18
 
 require (
-	github.com/frustra/bbcode v0.0.0-20201127003707-6ef347fbe1c8
 	github.com/muesli/termenv v0.12.0
 	golang.org/x/image v0.0.0-20220722155232-062f8c9fd539
 )
